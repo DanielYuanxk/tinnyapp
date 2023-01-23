@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/DanielYuanxk/tinnyapp/issues"
   },
-  "homepage": "https://github.com/DanielYuanxk/tinnyapp#readme"
+  "homepage": "https://github.com/DanielYuanxk/tinnyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
