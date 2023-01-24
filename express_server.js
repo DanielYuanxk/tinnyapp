@@ -23,6 +23,11 @@ app.get("/", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+app.get("/u/:id", (req, res) => {
+  // const longURL = ...
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
+});
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const id = generateRandomString();
