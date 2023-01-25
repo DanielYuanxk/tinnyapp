@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+
+    <title>New URL - TinyApp Example</title>
+  </head>
+  <%- include('partials/_header') %>
+
+  <body>
+    <div class="w-50">
+      <form method="POST" action="/login">
+        <!-- Email input -->
+        <div class="form-outline mb-4">
+          <input
+            type="email"
+            name="email"
+            id="form2Example1"
+            class="form-control"
+          />
+          <label class="form-label" for="form2Example1">Email address</label>
+        </div>
+
+        <!-- Password input -->
+        <div class="form-outline mb-4">
+          <input
+            type="password"
+            name="password"
+            id="form2Example2"
+            class="form-control"
+          />
+          <label class="form-label" for="form2Example2">Password</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">
+          Sign in
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

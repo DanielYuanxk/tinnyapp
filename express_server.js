@@ -16,7 +16,13 @@ function generateRandomString() {
   return randID;
 }
 
-const users = {};
+const users = {
+  user1: { id: "user1", email: "123@example.com", password: "12345" },
+};
+const urlDatabase = {
+  b2xVn2: "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com",
+};
 const emailLookUp = function (email) {
   for (let i in users) {
     if (users[i].email === email) {
@@ -25,23 +31,62 @@ const emailLookUp = function (email) {
   }
   return false;
 };
-const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+const checkPassword = function (email, password) {
+  for (let i in users) {
+    if (users[i].email === email) {
+      if (users[i].password === password) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+const getUserIdFromEmail = function (email) {
+  for (let i in users) {
+    if (users[i].email === email) {
+      return users[i].id;
+    }
+  }
 };
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+app.get("/login", (req, res) => {
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {
+    user,
+  };
+  res.render("urls_login", templateVars);
+});
 app.post("/login", (req, res) => {
-  res.redirect("/urls");
+  const email = req.body.email;
+  const password = req.body.password;
+  if (!emailLookUp(email)) {
+    res.status(403);
+    return res.send("error code 403");
+  }
+  if (emailLookUp(email)) {
+    if (!checkPassword(email, password)) {
+      res.status(403);
+      return res.send("error code 403");
+    }
+    if (checkPassword(email, password)) {
+      res.cookie("user_id", getUserIdFromEmail(email));
+      return res.redirect("/urls");
+    }
+  }
 });
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 app.get("/register", (req, res) => {
-  res.render("urls_register");
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {
+    user,
+  };
+  res.render("urls_register", templateVars);
 });
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password || emailLookUp(req.body.email)) {
@@ -54,8 +99,8 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       password: req.body.password,
     };
-    res.cookie("user_id", userID);
-    console.log(users);
+    //res.cookie("user_id", userID);
+    //console.log(users);
     res.redirect("/urls");
   }
 });
