@@ -15,7 +15,16 @@ function generateRandomString() {
   }
   return randID;
 }
+
 const users = {};
+const emailLookUp = function (email) {
+  for (let i in users) {
+    if (users[i].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -35,15 +44,20 @@ app.get("/register", (req, res) => {
   res.render("urls_register");
 });
 app.post("/register", (req, res) => {
-  const userID = generateRandomString();
-  users[userID] = {
-    id: userID,
-    email: req.body.email,
-    password: req.body.password,
-  };
-  res.cookie("user_id", userID);
-  console.log(users);
-  res.redirect("/urls");
+  if (!req.body.email || !req.body.password || emailLookUp(req.body.email)) {
+    res.status(400);
+    res.send("error code 400");
+  } else {
+    const userID = generateRandomString();
+    users[userID] = {
+      id: userID,
+      email: req.body.email,
+      password: req.body.password,
+    };
+    res.cookie("user_id", userID);
+    console.log(users);
+    res.redirect("/urls");
+  }
 });
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies["user_id"]];
