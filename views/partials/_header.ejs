@@ -18,10 +18,10 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
 
-      <%if(!username){%>
+      <%if(!user){%>
       <form class="form-inline" action="/login" method="POST">
         <div class="form-group">
-          <label for="longURL">Enter Username:</label>
+          <label for="longURL">Enter Email:</label>
           <input
             class="form-control"
             type="text"
@@ -31,11 +31,11 @@
           <button type="submit" class="btn btn-primary">login</button>
         </div>
       </form>
-      <div style="float: right"><%= username %></div>
-      <%}else if(username){%>
+
+      <%}else if(user){%>
       <form class="form-inline" action="/logout" method="POST">
         <div class="form-group">
-          <div style="float: right"><%= username %></div>
+          <div style="float: right"><%= user.email %></div>
           <button type="submit" class="btn btn-primary">logout</button>
         </div>
       </form>
