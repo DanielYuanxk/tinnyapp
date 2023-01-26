@@ -1,11 +1,11 @@
 const express = require("express");
-var cookieParser = require("cookie-parser");
+var cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const { render } = require("express/lib/response");
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
-app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: true }));
 function generateRandomString() {
   const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
@@ -16,6 +16,15 @@ function generateRandomString() {
   }
   return randID;
 }
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["hello whats your name", "hello my name is Daniel"],
+
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
 
 const users = {
   user1: {
@@ -73,10 +82,10 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 app.get("/login", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.user_id) {
     return res.redirect("/urls");
   }
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const templateVars = {
     user,
   };
@@ -95,20 +104,20 @@ app.post("/login", (req, res) => {
       return res.send("error code 403");
     }
     if (checkPassword(email, password)) {
-      res.cookie("user_id", getUserIdFromEmail(email));
+      req.session.user_id = getUserIdFromEmail(email);
       return res.redirect("/urls");
     }
   }
 });
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/login");
 });
 app.get("/register", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.user_id) {
     return res.redirect("/urls");
   }
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const templateVars = {
     user,
   };
@@ -133,10 +142,10 @@ app.post("/register", (req, res) => {
   }
 });
 app.get("/urls/new", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.redirect("/login");
   }
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const templateVars = {
     user,
   };
@@ -159,10 +168,10 @@ app.post("/urls/:id/delete", (req, res) => {
     return res.send("this URL doesn't exist");
   }
 
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.send("only logged in users can see or modify URL");
   }
-  if (req.cookies["user_id"] !== urlDatabase[req.params.id].userID) {
+  if (req.session.user_id !== urlDatabase[req.params.id].userID) {
     return res.send("this URL does not belone to you");
   }
 
@@ -182,14 +191,14 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 app.post("/urls", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.send("only loged in users can change urls");
   }
   const longURL = req.body.longURL;
   const id = generateRandomString();
   urlDatabase[id] = {};
   urlDatabase[id].longURL = longURL;
-  urlDatabase[id].userID = req.cookies["user_id"];
+  urlDatabase[id].userID = req.session.user_id;
   res.redirect(`/urls/${id}`);
 });
 app.get("/urls/:id", (req, res) => {
@@ -204,14 +213,14 @@ app.get("/urls/:id", (req, res) => {
     return res.send("this URL doesn't exist");
   }
 
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.send("only logged in users can see URL");
   }
 
-  if (req.cookies["user_id"] !== urlDatabase[req.params.id].userID) {
+  if (req.session.user_id !== urlDatabase[req.params.id].userID) {
     return res.send("this URL does not belone to you");
   }
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const templateVars = {
     user,
     id: req.params.id,
@@ -220,13 +229,13 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 app.get("/urls", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.send("sorry you have to be logged in to see the urls");
   }
-  const user = users[req.cookies["user_id"]];
-  const isUsers = urlsForUser(req.cookies["user_id"]);
+  const user = users[req.session.user_id];
+  const isUsers = urlsForUser(req.session.user_id);
   // console.log(isUsers);
-  // console.log(req.cookies["user_id"]);
+  // console.log(req.session.user_id);
   const templateVars = {
     urls: isUsers,
     user,
