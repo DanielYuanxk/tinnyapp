@@ -53,6 +53,9 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 app.get("/login", (req, res) => {
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls");
+  }
   const user = users[req.cookies["user_id"]];
   const templateVars = {
     user,
@@ -82,6 +85,9 @@ app.post("/logout", (req, res) => {
   res.redirect("/login");
 });
 app.get("/register", (req, res) => {
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls");
+  }
   const user = users[req.cookies["user_id"]];
   const templateVars = {
     user,
@@ -105,6 +111,9 @@ app.post("/register", (req, res) => {
   }
 });
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    return res.redirect("/login");
+  }
   const user = users[req.cookies["user_id"]];
   const templateVars = {
     user,
@@ -125,11 +134,16 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  // const longURL = ...
+  if (!urlDatabase[req.params.id]) {
+    res.send("sorry the url you requested does not exist");
+  }
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 app.post("/urls", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    return res.send("only loged in users can change urls");
+  }
   const longURL = req.body.longURL;
   const id = generateRandomString();
   urlDatabase[id] = longURL;
