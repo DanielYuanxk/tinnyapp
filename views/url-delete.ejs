@@ -29,11 +29,11 @@
         </thead>
 
         <tbody>
-          <% for (let id in urls) { %>
+          <% for (let i in urls) { %>
           <form method="POST" action="/urls/<%=id%>/delete">
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
+              <td><%= i %></td>
+              <td><%= urls[i].longURL %></td>
               <td>
                 <button type="submit" class="btn btn-outline-danger">
                   DELETE
