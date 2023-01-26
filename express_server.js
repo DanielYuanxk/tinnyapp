@@ -121,7 +121,7 @@ app.post("/register", (req, res) => {
       password: req.body.password,
     };
     //res.cookie("user_id", userID);
-    console.log(users);
+    // console.log(users);
     res.redirect("/urls");
   }
 });
@@ -167,7 +167,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
   if (!urlDatabase[req.params.id]) {
     return res.send("sorry the url you requested does not exist");
   }
@@ -218,8 +218,8 @@ app.get("/urls", (req, res) => {
   }
   const user = users[req.cookies["user_id"]];
   const isUsers = urlsForUser(req.cookies["user_id"]);
-  console.log(isUsers);
-  console.log(req.cookies["user_id"]);
+  // console.log(isUsers);
+  // console.log(req.cookies["user_id"]);
   const templateVars = {
     urls: isUsers,
     user,
