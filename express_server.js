@@ -2,6 +2,7 @@ const express = require("express");
 var cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const { render } = require("express/lib/response");
+const { getUserIdFromEmail } = require("./helpers");
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
@@ -70,13 +71,6 @@ const checkPassword = function (email, password) {
   }
   return false;
 };
-const getUserIdFromEmail = function (email) {
-  for (let i in users) {
-    if (users[i].email === email) {
-      return users[i].id;
-    }
-  }
-};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -104,7 +98,7 @@ app.post("/login", (req, res) => {
       return res.send("error code 403");
     }
     if (checkPassword(email, password)) {
-      req.session.user_id = getUserIdFromEmail(email);
+      req.session.user_id = getUserIdFromEmail(email, users);
       return res.redirect("/urls");
     }
   }
@@ -136,8 +130,7 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       password: hashedPassword,
     };
-    //res.cookie("user_id", userID);
-    console.log(users);
+
     res.redirect("/urls");
   }
 });
@@ -234,8 +227,7 @@ app.get("/urls", (req, res) => {
   }
   const user = users[req.session.user_id];
   const isUsers = urlsForUser(req.session.user_id);
-  // console.log(isUsers);
-  // console.log(req.session.user_id);
+
   const templateVars = {
     urls: isUsers,
     user,
