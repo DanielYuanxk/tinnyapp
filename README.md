@@ -4,6 +4,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
+-logged in as user 123@example.com
 !["logged in as user  123@example.com"](https://github.com/DanielYuanxk/tinnyapp/blob/main/docs/Screenshot%202023-01-26%20at%207.18.00%20PM.png)
 !["deleted one of the URLs"](https://github.com/DanielYuanxk/tinnyapp/blob/main/docs/Screenshot%202023-01-26%20at%207.18.18%20PM.png)
 !["editing existing URL"](https://github.com/DanielYuanxk/tinnyapp/blob/main/docs/Screenshot%202023-01-26%20at%207.18.36%20PM.png)
